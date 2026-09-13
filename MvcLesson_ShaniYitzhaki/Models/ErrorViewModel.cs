@@ -5,5 +5,6 @@ namespace MvcLesson_ShaniYitzhaki.Models
         public string? RequestId { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        // ניסיון
     }
 }

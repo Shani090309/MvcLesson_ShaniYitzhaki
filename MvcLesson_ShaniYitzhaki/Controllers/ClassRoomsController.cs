@@ -199,6 +199,26 @@ namespace MvcLesson_ShaniYitzhaki.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: ClassRooms/WithStudents/5
+        public async Task<IActionResult> WithStudents(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var classRoom = await _context.ClassRooms
+           .Include(c => c.Students.OrderBy(s => s.FirstName)) // מיון התלמידים לפי שם פרטי
+           .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (classRoom == null)
+            {
+                return NotFound();
+            }
+
+            return View(classRoom);
+        }
+
         private bool ClassRoomExists(int id)
         {
             return _context.ClassRooms.Any(e => e.Id == id);

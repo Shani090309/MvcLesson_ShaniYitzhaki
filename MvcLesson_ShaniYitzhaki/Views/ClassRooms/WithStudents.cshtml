@@ -1,0 +1,78 @@
+﻿@model MvcLesson_ShaniYitzhaki.Models.ClassRoom
+
+@{
+    ViewData["Title"] = "Classroom Details";
+}
+
+<!-- הוספת dir="rtl" מיישר את הכל בצורה מושלמת לעברית -->
+<div dir="rtl" style="text-align: right;" class="container mt-4">
+    <h1 class="mb-4">ניהול כיתה ותלמידים</h1>
+
+    <!-- 1. כרטיס עליון - פרטי האב -->
+    <div class="parent-card">
+        <h2>כיתה: @Model.ClassName</h2>
+        <div class="parent-fields">
+            <div><span class="field-label">מזהה כיתה:</span> @Model.Id</div>
+            <div><span class="field-label">שם הכיתה:</span> @Model.ClassName</div>
+            <div><span class="field-label">סה"כ תלמידים:</span> <span class="count-badge">@(Model.Students != null ? Model.Students.Count : 0)</span></div>
+        </div>
+    </div>
+
+    @if (Model.Students != null && Model.Students.Any())
+    {
+        // חישובים סטטיסטיים אמיתיים על הנתונים של התלמידים בכיתה
+        var avgGrade = Model.Students.Average(s => s.GradeLevel);
+        var maxGrade = Model.Students.Max(s => s.GradeLevel);
+        var minGrade = Model.Students.Min(s => s.GradeLevel);
+
+        <div class="alert alert-info py-2 mb-3" style="font-size: 14px;">
+            📊 <strong>סטטיסטיקה כיתתית:</strong>
+            ממוצע שנתון: <strong>@avgGrade</strong> |
+            שנתון מקסימלי: <strong>@maxGrade</strong> |
+            שנתון מינימלי: <strong>@minGrade</strong> |
+            סך הכל תלמידים: <strong>@Model.Students.Count</strong>
+        </div>
+    }
+    <!-- 2. אזור תחתון - רשומות מקושרות -->
+    <div class="children-section">
+        <h3>רשימת התלמידים המקושרים <span class="count-badge">@(Model.Students != null ? Model.Students.Count : 0)</span></h3>
+
+        @if (Model.Students != null && Model.Students.Any())
+        {
+            <table class="data-table" style="direction: rtl;">
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">שם פרטי</th>
+                        <th style="text-align: right;">שם משפחה</th>
+                        <th style="text-align: right;">שנתון</th>
+                        <th style="text-align: right;">פעולות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var student in Model.Students)
+                    {
+                        <tr>
+                            <td>@student.FirstName</td>
+                            <td>@student.LastName</td>
+                            <td>@student.GradeLevel</td>
+                            <td>
+                                <a class="btn-details" asp-controller="Students" asp-action="Details" asp-route-id="@student.Id">פרטים</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-message mt-3">
+                אין תלמידים המשויכים לכיתה זו כרגע.
+            </div>
+        }
+    </div>
+
+    <!-- קישור חזרה לרשימה -->
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">חזרה לרשימת הכיתות</a>
+    </div>
+</div>

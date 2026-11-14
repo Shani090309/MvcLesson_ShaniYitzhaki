@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.Collections.Generic;
 
 namespace MvcLesson_ShaniYitzhaki.Models
 {
@@ -7,6 +8,7 @@ namespace MvcLesson_ShaniYitzhaki.Models
         public int Id { get; set; }
         public string Title { get; set; }
 
-        public ICollection<Student> Students { get; set; }
+        //[ValidateNever]
+        public ICollection<Student> Students { get; set; } = new List<Student>();
     }
 }

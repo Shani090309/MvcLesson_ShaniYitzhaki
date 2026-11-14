@@ -16,10 +16,25 @@ namespace MvcLesson_ShaniYitzhaki.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CourseStudent", b =>
+                {
+                    b.Property<int>("CoursesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CoursesId", "StudentsId");
+
+                    b.HasIndex("StudentsId");
+
+                    b.ToTable("CourseStudent");
+                });
 
             modelBuilder.Entity("MvcLesson_ShaniYitzhaki.Models.ClassRoom", b =>
                 {
@@ -66,9 +81,6 @@ namespace MvcLesson_ShaniYitzhaki.Migrations
                     b.Property<int?>("ClassRoomId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -80,16 +92,9 @@ namespace MvcLesson_ShaniYitzhaki.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TeacherId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClassRoomId");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("TeacherId");
 
                     b.ToTable("Students");
                 });
@@ -115,32 +120,61 @@ namespace MvcLesson_ShaniYitzhaki.Migrations
                     b.ToTable("Teachers");
                 });
 
+            modelBuilder.Entity("StudentTeacher", b =>
+                {
+                    b.Property<int>("StudentsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeachersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentsId", "TeachersId");
+
+                    b.HasIndex("TeachersId");
+
+                    b.ToTable("StudentTeacher");
+                });
+
+            modelBuilder.Entity("CourseStudent", b =>
+                {
+                    b.HasOne("MvcLesson_ShaniYitzhaki.Models.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CoursesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MvcLesson_ShaniYitzhaki.Models.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MvcLesson_ShaniYitzhaki.Models.Student", b =>
                 {
-                    b.HasOne("MvcLesson_ShaniYitzhaki.Models.ClassRoom", null)
+                    b.HasOne("MvcLesson_ShaniYitzhaki.Models.ClassRoom", "ClassRoom")
                         .WithMany("Students")
                         .HasForeignKey("ClassRoomId");
 
-                    b.HasOne("MvcLesson_ShaniYitzhaki.Models.Course", null)
-                        .WithMany("Students")
-                        .HasForeignKey("CourseId");
+                    b.Navigation("ClassRoom");
+                });
+
+            modelBuilder.Entity("StudentTeacher", b =>
+                {
+                    b.HasOne("MvcLesson_ShaniYitzhaki.Models.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MvcLesson_ShaniYitzhaki.Models.Teacher", null)
-                        .WithMany("Students")
-                        .HasForeignKey("TeacherId");
+                        .WithMany()
+                        .HasForeignKey("TeachersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MvcLesson_ShaniYitzhaki.Models.ClassRoom", b =>
-                {
-                    b.Navigation("Students");
-                });
-
-            modelBuilder.Entity("MvcLesson_ShaniYitzhaki.Models.Course", b =>
-                {
-                    b.Navigation("Students");
-                });
-
-            modelBuilder.Entity("MvcLesson_ShaniYitzhaki.Models.Teacher", b =>
                 {
                     b.Navigation("Students");
                 });
